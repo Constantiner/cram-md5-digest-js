@@ -20,5 +20,5 @@
 		"build-commonjs": "babel app -d lib --plugins transform-es2015-modules-commonjs"
 	},
 	"author": "Konstantin Kovalev (constantiner@gmail.com)",
-	"license": "ISC"
+	"license": "MIT"
 }
