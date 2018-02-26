@@ -1,0 +1,24 @@
+{
+	"name": "cram-md5-digest",
+	"version": "1.0.0",
+	"description": "CRAM-MD5 digester library.",
+	"dependencies": {},
+	"devDependencies": {
+		"babel-cli": "^6.26.0",
+		"babel-core": "^6.26.0",
+		"babel-plugin-transform-es2015-modules-amd": "^6.24.1",
+		"babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
+		"babel-preset-env": "^1.6.0",
+		"babel-preset-import-export": "^1.0.2",
+		"mocha": "^4.0.1"
+	},
+	"scripts": {
+		"test": "mocha --require babel-core/register",
+		"build": "babel app -d lib -w",
+		"build-dev": "babel app -d lib -w --plugins transform-es2015-modules-amd",
+		"build-amd": "babel app -d lib --plugins transform-es2015-modules-amd",
+		"build-commonjs": "babel app -d lib --plugins transform-es2015-modules-commonjs"
+	},
+	"author": "Konstantin Kovalev (constantiner@gmail.com)",
+	"license": "ISC"
+}
