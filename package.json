@@ -10,15 +10,21 @@
 		"babel-plugin-transform-es2015-modules-commonjs": "^6.26.0",
 		"babel-preset-env": "^1.6.0",
 		"babel-preset-import-export": "^1.0.2",
-		"mocha": "^4.0.1"
+		"eslint": "^4.18.1",
+		"jest": "^22.4.2"
 	},
 	"scripts": {
-		"test": "mocha --require babel-core/register",
+		"test": "jest",
+		"lint": "eslint '**/*.js'",
 		"build": "babel app -d lib -w",
 		"build-dev": "babel app -d lib -w --plugins transform-es2015-modules-amd",
 		"build-amd": "babel app -d lib --plugins transform-es2015-modules-amd",
 		"build-commonjs": "babel app -d lib --plugins transform-es2015-modules-commonjs"
 	},
 	"author": "Konstantin Kovalev (constantiner@gmail.com)",
-	"license": "MIT"
+	"license": "MIT",
+	"repository": {
+		"url": "https://github.com/Constantiner/cram-md5-digest-js.git",
+		"type": "git"
+	}
 }

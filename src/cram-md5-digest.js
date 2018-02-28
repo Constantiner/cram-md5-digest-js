@@ -1,10 +1,10 @@
-function* sequenceGenerator(startValue, condition, changeValueRule) {
+const sequenceGenerator = function* (startValue, condition, changeValueRule) {
 	let value = startValue;
 	while (condition(value)) {
 		yield value;
 		value = changeValueRule(value);
 	}
-}
+};
 export function cramMd5Digest(passwordString, cramKey) {
 	const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args))),
 		range = (from, to) => [...sequenceGenerator(from, value => value <= to, value => value + 1)],
