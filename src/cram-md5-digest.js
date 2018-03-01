@@ -1,4 +1,4 @@
-const sequenceGenerator = function* (startValue, condition, changeValueRule) {
+const sequenceGenerator = function*(startValue, condition, changeValueRule) {
 	let value = startValue;
 	while (condition(value)) {
 		yield value;
@@ -170,14 +170,8 @@ export function cramMd5Digest(passwordString, cramKey) {
 			});
 			return stateObj;
 		},
-		set32Little = (value, index) => array => {
-			const result = [...array];
-			result[index++] = value & 0xff;
-			result[index++] = (value >>> 8) & 0xff;
-			result[index++] = (value >>> 16) & 0xff;
-			result[index++] = (value >>> 24) & 0xff;
-			return result;
-		},
+		set32Little = (value, index) => array =>
+			range(0, 3).reduce((arr, i) => ((arr[index + i] = (value >>> (i * 8)) & 0xff), arr), [...array]),
 		finalDigest = stateObj => {
 			const bits = compose(
 					set32Little(Math.floor(stateObj.byteCount * 8 / 0x100000000), 4),
