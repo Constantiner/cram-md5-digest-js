@@ -2,6 +2,13 @@
 	"name": "cram-md5-digest",
 	"version": "1.0.0",
 	"description": "CRAM-MD5 digester library.",
+	"keywords": [
+		"md5",
+		"cryptography",
+		"JavaScript",
+		"ESNext",
+		"CRAM-MD5"
+	],
 	"dependencies": {},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
