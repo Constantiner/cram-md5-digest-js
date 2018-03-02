@@ -10,8 +10,15 @@ export const cramMd5Digest = (passwordString, cramKey) => {
 		range = (from, to) => [...sequenceGenerator(from, value => value <= to, value => value + 1)],
 		getEmptyArray = length => Array.from({ length }),
 		T = range(0, 63).map(i => (Math.abs(Math.sin(i + 1)) * 0x100000000) | 0),
+		copyState = (source, overridesObj = {}) => {
+			const arraysObj = {
+				block: source.block ? [...source.block] : undefined,
+				padding: source.padding ? [...source.padding] : undefined
+			};
+			return Object.assign({}, source, arraysObj, overridesObj);
+		},
 		init = (initObj = {}) =>
-			Object.assign({}, initObj, {
+			copyState(initObj, {
 				byteCount: 0,
 				state0: 0x67452301,
 				state1: 0xefcdab89,
@@ -145,7 +152,7 @@ export const cramMd5Digest = (passwordString, cramKey) => {
 			c = II(c, d, a, b, x[2], 15, T[62]); // 63
 			b = II(b, c, d, a, x[9], 21, T[63]); // 64
 
-			return Object.assign({}, stateObj, {
+			return copyState(stateObj, {
 				state0: toUnsigned(stateObj.state0 + a),
 				state1: toUnsigned(stateObj.state1 + b),
 				state2: toUnsigned(stateObj.state2 + c),
@@ -153,7 +160,7 @@ export const cramMd5Digest = (passwordString, cramKey) => {
 			});
 		},
 		update = (inputArray, inputLength) => stateObj => {
-			stateObj = Object.assign({}, stateObj);
+			stateObj = copyState(stateObj);
 			inputArray.slice(0, inputLength).forEach(item => {
 				stateObj.block[stateObj.byteCount % 64] = item;
 				if (++stateObj.byteCount % 64 == 0) {
@@ -178,8 +185,8 @@ export const cramMd5Digest = (passwordString, cramKey) => {
 					set32Little(stateObj.state1, 4),
 					set32Little(stateObj.state0, 0)
 				)(getEmptyArray(16)),
-				padding: stateObj.padding,
-				block: stateObj.block
+				padding: [...stateObj.padding],
+				block: [...stateObj.block]
 			};
 		},
 		updateArray = (inputArray, stateObj) => update(inputArray, inputArray.length)(stateObj),
@@ -193,8 +200,8 @@ export const cramMd5Digest = (passwordString, cramKey) => {
 			if (password.length > 64) {
 				const { digest, padding, block } = compose(finalDigest, update(password, password.length))(stateObj);
 				stateObj = init({
-					padding,
-					block
+					padding: [...padding],
+					block: [...block]
 				});
 				paddedKey = digest;
 			} else {
@@ -208,8 +215,8 @@ export const cramMd5Digest = (passwordString, cramKey) => {
 			stateObj = updateString(cramKey, stateObj);
 			const { digest: theDigest, padding, block } = finalDigest(stateObj);
 			stateObj = init({
-				padding,
-				block
+				padding: [...padding],
+				block: [...block]
 			});
 
 			range(0, 63).forEach(index => (paddedKey[index] ^= 0x36 ^ 0x5c));
