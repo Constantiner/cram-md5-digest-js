@@ -5,9 +5,10 @@ const sequenceGenerator = function*(startValue, condition, changeValueRule) {
 		value = changeValueRule(value);
 	}
 };
-export function cramMd5Digest(passwordString, cramKey) {
+export const cramMd5Digest = (passwordString, cramKey) => {
 	const compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args))),
 		range = (from, to) => [...sequenceGenerator(from, value => value <= to, value => value + 1)],
+		getEmptyArray = length => Array.from({ length }),
 		T = range(0, 63).map(i => (Math.abs(Math.sin(i + 1)) * 0x100000000) | 0),
 		init = (initObj = {}) =>
 			Object.assign({}, initObj, {
@@ -19,12 +20,8 @@ export function cramMd5Digest(passwordString, cramKey) {
 			}),
 		initialInit = () =>
 			init({
-				padding: Array.from({
-					length: 64
-				}).map((x, index) => (index === 0 ? 0x80 : 0)),
-				block: Array.from({
-					length: 64
-				})
+				padding: getEmptyArray(64).map((x, index) => (index === 0 ? 0x80 : 0)),
+				block: getEmptyArray(64)
 			}),
 		nBitsGenerator = function*(nBits) {
 			while (nBits >= 6) {
@@ -73,13 +70,11 @@ export function cramMd5Digest(passwordString, cramKey) {
 				b = stateObj.state1,
 				c = stateObj.state2,
 				d = stateObj.state3;
-			const x = Array(16)
-				.fill()
-				.map(
-					(_, j) =>
-						((stateObj.block[j * 4 + 3] * 256 + stateObj.block[j * 4 + 2]) * 256 + stateObj.block[j * 4 + 1]) * 256 +
-						stateObj.block[j * 4]
-				);
+			const x = getEmptyArray(16).map(
+				(_, j) =>
+					((stateObj.block[j * 4 + 3] * 256 + stateObj.block[j * 4 + 2]) * 256 + stateObj.block[j * 4 + 1]) * 256 +
+					stateObj.block[j * 4]
+			);
 
 			// Round 1
 			a = FF(a, b, c, d, x[0], 7, T[0]); // 1
@@ -176,11 +171,7 @@ export function cramMd5Digest(passwordString, cramKey) {
 			const bits = compose(
 					set32Little(Math.floor(stateObj.byteCount * 8 / 0x100000000), 4),
 					set32Little(stateObj.byteCount * 8, 0)
-				)(
-					Array.from({
-						length: 8
-					})
-				),
+				)(getEmptyArray(8)),
 				index = stateObj.byteCount % 64;
 			stateObj = compose(update(bits, 8), update(stateObj.padding, index < 56 ? 56 - index : 120 - index))(stateObj);
 			return {
@@ -189,11 +180,7 @@ export function cramMd5Digest(passwordString, cramKey) {
 					set32Little(stateObj.state2, 8),
 					set32Little(stateObj.state1, 4),
 					set32Little(stateObj.state0, 0)
-				)(
-					Array.from({
-						length: 16
-					})
-				),
+				)(getEmptyArray(16)),
 				padding: stateObj.padding,
 				block: stateObj.block
 			};
@@ -234,7 +221,7 @@ export function cramMd5Digest(passwordString, cramKey) {
 			return finalHexDigest(stateObj);
 		};
 	return performCram(passwordString, cramKey, initialInit());
-}
+};
 
 export function cramMd5DigestBase64(passwordString, cramKey, padding = false) {
 	const resultString = cramMd5Digest(passwordString, cramKey),
