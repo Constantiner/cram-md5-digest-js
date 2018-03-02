@@ -66,10 +66,7 @@ export const cramMd5Digest = (passwordString, cramKey) => {
 		// MD5 basic transformation. Transforms state based on block.
 		//
 		transformBlock = stateObj => {
-			let a = stateObj.state0,
-				b = stateObj.state1,
-				c = stateObj.state2,
-				d = stateObj.state3;
+			let { state0: a, state1: b, state2: c, state3: d } = stateObj;
 			const x = getEmptyArray(16).map(
 				(_, j) =>
 					((stateObj.block[j * 4 + 3] * 256 + stateObj.block[j * 4 + 2]) * 256 + stateObj.block[j * 4 + 1]) * 256 +
