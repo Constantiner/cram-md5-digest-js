@@ -157,38 +157,35 @@ const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => 
 			FF(1, 12),
 			FF(0, 7)
 		)([stateObj.state0, stateObj.state1, stateObj.state2, stateObj.state3, 0, x(stateObj)]),
-	update = (inputArray, inputLength = inputArray.length) => stateObj => {
-		stateObj = copyState(stateObj);
-		inputArray.slice(0, inputLength).forEach(item => {
+	update = (inputArray, inputLength = inputArray.length) => stateObj =>
+		inputArray.slice(0, inputLength).reduce((stateObj, item) => {
 			stateObj.block[stateObj.byteCount % 64] = item;
 			if (++stateObj.byteCount % 64 == 0) {
 				stateObj = transformBlock(stateObj);
 			}
-		});
-		return stateObj;
-	},
+			return stateObj;
+		}, copyState(stateObj)),
 	set32Little = (value, index) => array =>
 		range(0, 3).reduce((arr, i) => ((arr[index + i] = (value >>> (i * 8)) & 0xff), arr), [...array]),
 	getBits = stateObj =>
 		compose(set32Little(Math.floor(stateObj.byteCount * 8 / 0x100000000), 4), set32Little(stateObj.byteCount * 8, 0))(
 			getEmptyArray(8)
 		),
-	finalDigest = stateObj => {
-		const index = stateObj.byteCount % 64;
-		stateObj = compose(update(getBits(stateObj)), update(stateObj.padding, index < 56 ? 56 - index : 120 - index))(
-			stateObj
-		);
-		return {
-			digest: compose(
-				set32Little(stateObj.state3, 12),
-				set32Little(stateObj.state2, 8),
-				set32Little(stateObj.state1, 4),
-				set32Little(stateObj.state0, 0)
-			)(getEmptyArray(16)),
-			padding: [...stateObj.padding],
-			block: [...stateObj.block]
-		};
-	},
+	alignIndex = index =>
+		[[56, ind => 120 - ind], [-Infinity, ind => 56 - ind]].find(range => index >= range[0])[1](index),
+	getIndex = stateObj => alignIndex(stateObj.byteCount % 64),
+	updateWithIndex = stateObj => update(stateObj.padding, getIndex(stateObj))(stateObj),
+	getFinalDigestObj = stateObj => ({
+		digest: compose(
+			set32Little(stateObj.state3, 12),
+			set32Little(stateObj.state2, 8),
+			set32Little(stateObj.state1, 4),
+			set32Little(stateObj.state0, 0)
+		)(getEmptyArray(16)),
+		padding: [...stateObj.padding],
+		block: [...stateObj.block]
+	}),
+	finalDigest = stateObj => compose(getFinalDigestObj, update(getBits(stateObj)), updateWithIndex)(stateObj),
 	hexByte = x => (x < 16 ? "0" : "") + x.toString(16),
 	toHexString = byteArray => byteArray.reduce((acc, x) => acc + hexByte(x), "").toLowerCase(),
 	finalHexDigest = stateObj => toHexString(finalDigest(stateObj).digest),
