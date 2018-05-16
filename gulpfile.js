@@ -19,7 +19,7 @@ const sourcemaps = require("gulp-sourcemaps");
 gulp.task("clean", () => del(["dist"]));
 
 const getSourceFile = () => gulp.src("src/cram-md5-digest.js"),
-	getBanner = () => header(banner, { pkg: pkg }),
+	getBanner = () => header(banner, { pkg }),
 	getDest = () => gulp.dest("./dist/");
 
 gulp.task("es6module", () =>
