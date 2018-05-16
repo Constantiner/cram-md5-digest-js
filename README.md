@@ -2,7 +2,13 @@
 
 CRAM-MD5 digester implementation in JavaScript with zero dependencies.
 
-Usage:
+## Installation
+
+```
+npm install cram-md5-digest
+```
+
+## Usage
 
 ```javascript
 import {cramMd5DigestBase64} from "cram-md5-digest";
