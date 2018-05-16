@@ -1,6 +1,6 @@
 # cram-md5-digest-js
 
-CRAM-MD5 digester implementation in JavaScript.
+CRAM-MD5 digester implementation in JavaScript with zero dependencies.
 
 Usage:
 

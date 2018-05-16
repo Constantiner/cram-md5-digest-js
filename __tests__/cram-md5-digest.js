@@ -5,6 +5,12 @@ describe("cramMd5Digest", () => {
 		it("Base64 digest without padding should be calculated right", () => {
 			expect(
 				cramMd5DigestBase64(
+					"Превед",
+					"E61F8DACCF78E6D810D2D28EADD0A5DB"
+				)
+			).toEqual("ZDYxODU1ODhjNGVhODMwNzhkNmFiN2MwYmNlZGU0NTA");
+			expect(
+				cramMd5DigestBase64(
 					"(4_O)rt1BtMhs^boQIFVGN4^@U6m-5j@i",
 					"(1C6hqgm2siyHl3*36#t17c/7h-7h!d!sLoyt8$vnoe3K5to7#^kcYx8$62b0w/Dt&lNs"
 				)
@@ -125,6 +131,13 @@ describe("cramMd5Digest", () => {
 	});
 	describe("cramMd5DigestBase64 with padding", () => {
 		it("Base64 digest with padding should be calculated right", () => {
+			expect(
+				cramMd5DigestBase64(
+					"Превед",
+					"E61F8DACCF78E6D810D2D28EADD0A5DB",
+					true
+				)
+			).toEqual("ZDYxODU1ODhjNGVhODMwNzhkNmFiN2MwYmNlZGU0NTA=");
 			expect(
 				cramMd5DigestBase64(
 					"(4_O)rt1BtMhs^boQIFVGN4^@U6m-5j@i",
@@ -280,6 +293,12 @@ describe("cramMd5Digest", () => {
 	});
 	describe("cramMd5Digest", () => {
 		it("cramMd5Digest should be calculated right", () => {
+			expect(
+				cramMd5Digest(
+					"Превед",
+					"E61F8DACCF78E6D810D2D28EADD0A5DB"
+				)
+			).toEqual("d6185588c4ea83078d6ab7c0bcede450");
 			expect(
 				cramMd5Digest(
 					"(4_O)rt1BtMhs^boQIFVGN4^@U6m-5j@i",

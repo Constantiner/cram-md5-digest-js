@@ -1,19 +1,28 @@
-const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => index + from),
+const range = (from, to) =>
+		Array.from(
+			{
+				length: to - from + 1
+			},
+			(_, index) => index + from
+		),
 	range64 = range(0, 63),
 	T = range64.map(i => (Math.abs(Math.sin(i + 1)) * 0x100000000) | 0),
 	compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args))),
-	getEmptyArray = length => Array.from({ length }),
+	getEmptyArray = length =>
+		Array.from({
+			length
+		}),
 	copyState = (source, overridesObj = {}) =>
 		Object.assign(
 			{},
 			source,
 			{
-				block: source.block ? [...source.block] : undefined,
-				padding: source.padding ? [...source.padding] : undefined
+				block: [...source.block],
+				padding: [...source.padding]
 			},
 			overridesObj
 		),
-	init = (initObj = {}) =>
+	init = initObj =>
 		copyState(initObj, {
 			byteCount: 0,
 			state0: 0x67452301,
@@ -50,7 +59,7 @@ const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => 
 			...[...nBitsGenerator(nBits)].map(nBits => utfTextValue(code, nBits))
 		])(initialNBits(code)),
 	toUTFArray = stringToEncode =>
-		[...stringToEncode]
+		Array.from(stringToEncode)
 			.map(x => x.charCodeAt(0))
 			.reduce((utfText, code) => [...utfText, ...(code < 0x80 ? [code] : utfTextForCodeMoreThan0x80(code))], []),
 	toUnsigned = x => (x + 0x100000000) % 0x100000000,
@@ -160,7 +169,7 @@ const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => 
 	update = (inputArray, inputLength = inputArray.length) => stateObj =>
 		inputArray.slice(0, inputLength).reduce((stateObj, item) => {
 			stateObj.block[stateObj.byteCount % 64] = item;
-			if (++stateObj.byteCount % 64 == 0) {
+			if (++stateObj.byteCount % 64 === 0) {
 				stateObj = transformBlock(stateObj);
 			}
 			return stateObj;
@@ -189,7 +198,12 @@ const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => 
 	hexByte = x => (x < 16 ? "0" : "") + x.toString(16),
 	toHexString = byteArray => byteArray.reduce((acc, x) => acc + hexByte(x), "").toLowerCase(),
 	finalHexDigest = stateObj => toHexString(finalDigest(stateObj).digest),
-	expandArrayTo64Length = original => [...original, ...Array.from({ length: 64 - original.length }).fill(0)],
+	expandArrayTo64Length = original => [
+		...original,
+		...Array.from({
+			length: 64 - original.length
+		}).fill(0)
+	],
 	updateWithDigest = stateObj => update(stateObj.digest)(stateObj),
 	performCram = (password, cramKey, stateObj) => {
 		const paddedKey = expandArrayTo64Length(
@@ -209,38 +223,50 @@ const range = (from, to) => Array.from({ length: to - from + 1 }, (_, index) => 
 			update(paddedKey)
 		)(stateObj);
 	},
+	/**
+	 * Generates MD5 hash from passwordString and cramKey
+	 *
+	 * @param {string} passwordString Is a password to hash.
+	 * @param {string} cramKey Is a key to hash password with.
+	 * @returns {string} Is resulting hash.
+	 */
 	cramMd5Digest = (passwordString, cramKey) => performCram(toUTFArray(passwordString), cramKey, initialInit()),
 	encodeTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
 	getPaddingSymbol = padding => (padding ? "=" : ""),
-	postBase64Actions = (result, encodeTable, binary, index, padding) =>
-		result +
-		encodeTable.charAt(binary[index] >>> 2) +
-		(index + 1 < binary.length
-			? encodeTable.charAt(((binary[index] << 4) & 0x30) | (binary[index + 1] >>> 4)) +
-			  encodeTable.charAt((binary[index + 1] << 2) & 0x3c)
-			: encodeTable.charAt((binary[index] << 4) & 0x30) + getPaddingSymbol(padding)) +
+	postBase64Actions = (base64Sequence, encodeTable, md5Binary, padding) =>
+		base64Sequence +
+		encodeTable.charAt(md5Binary[30] >>> 2) +
+		encodeTable.charAt(((md5Binary[30] << 4) & 0x30) | (md5Binary[30 + 1] >>> 4)) +
+		encodeTable.charAt((md5Binary[31] << 2) & 0x3c) +
 		getPaddingSymbol(padding),
-	getArrayAndLastValue = arr => ({ arr, last: arr[arr.length - 1] + 3 }),
-	base64EncodeIndexGenerator = length => Array.from({ length: Math.floor(length / 3) }, (_, i) => i * 3),
-	base64Encode = (binary, padding) => {
-		const { arr: seq, last: index } = getArrayAndLastValue(base64EncodeIndexGenerator(binary.length)),
-			result = seq.reduce(
-				(result, index) =>
-					result +
-					encodeTable.charAt(binary[index] >>> 2) +
-					encodeTable.charAt(((binary[index] << 4) & 0x30) | (binary[index + 1] >>> 4)) +
-					encodeTable.charAt(((binary[index + 1] << 2) & 0x3c) | (binary[index + 2] >>> 6)) +
-					encodeTable.charAt(binary[index + 2] & 0x3f),
-				""
-			);
-		return index < binary.length ? postBase64Actions(result, encodeTable, binary, index, padding) : result;
-	},
+	base64EncodeIndexGenerator = () =>
+		Array.from(
+			{
+				length: 10
+			},
+			(_, i) => i * 3
+		),
+	getBase64Sequence = md5Binary =>
+		base64EncodeIndexGenerator().reduce(
+			(result, index) =>
+				result +
+				encodeTable.charAt(md5Binary[index] >>> 2) +
+				encodeTable.charAt(((md5Binary[index] << 4) & 0x30) | (md5Binary[index + 1] >>> 4)) +
+				encodeTable.charAt(((md5Binary[index + 1] << 2) & 0x3c) | (md5Binary[index + 2] >>> 6)) +
+				encodeTable.charAt(md5Binary[index + 2] & 0x3f),
+			""
+		),
+	base64Encode = (md5Binary, padding) =>
+		postBase64Actions(getBase64Sequence(md5Binary), encodeTable, md5Binary, padding),
+	/**
+	 * Generates MD5 hash from passwordString and cramKey and encodes it in Base64.
+	 *
+	 * @param {string} passwordString Is a password to hash.
+	 * @param {string} cramKey Is a key to hash password with.
+	 * @param {boolean} [padding=false] If true there is Base64 padding (=) added.
+	 * @returns {string} Is resulting hash.
+	 */
 	cramMd5DigestBase64 = (passwordString, cramKey, padding = false) =>
-		base64Encode(
-			cramMd5Digest(passwordString, cramKey)
-				.split("")
-				.map(char => char.charCodeAt(0)),
-			padding
-		);
+		base64Encode(Array.from(cramMd5Digest(passwordString, cramKey)).map(char => char.charCodeAt(0)), padding);
 
 export { cramMd5Digest, cramMd5DigestBase64 };
