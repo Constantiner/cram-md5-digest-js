@@ -41,7 +41,7 @@ const range = (from, to) =>
 			yield nBits;
 		}
 	},
-	utfTextValue = (code, nBits) => 0x80 + ((code >>> nBits) & 0x3f),
+	utfTextValue = code => nBits => 0x80 + ((code >>> nBits) & 0x3f),
 	nBitsMatches = [
 		[0x00000800, 11],
 		[0x00010000, 16],
@@ -56,7 +56,7 @@ const range = (from, to) =>
 	utfTextForCodeMoreThan0x80 = code =>
 		(nBits => [
 			initialUtfTextForCodeMoreThan0x80(code, nBits),
-			...[...nBitsGenerator(nBits)].map(nBits => utfTextValue(code, nBits))
+			...[...nBitsGenerator(nBits)].map(utfTextValue(code))
 		])(initialNBits(code)),
 	toUTFArray = stringToEncode =>
 		Array.from(stringToEncode)
