@@ -226,8 +226,8 @@ const range = (from, to) =>
 	/**
 	 * Generates MD5 hash from passwordString and cramKey
 	 *
-	 * @param {string} passwordString Is a password to hash.
-	 * @param {string} cramKey Is a key to hash password with.
+	 * @param {string} passwordString Is a secret (password) to hash.
+	 * @param {string} cramKey Is a key (digest) to hash password with.
 	 * @returns {string} Is resulting hash.
 	 */
 	cramMd5Digest = (passwordString, cramKey) => performCram(toUTFArray(passwordString), cramKey, initialInit()),
