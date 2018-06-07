@@ -2,24 +2,34 @@
 	"name": "@constantiner/cram-md5-digest",
 	"version": "0.9.1",
 	"description": "CRAM-MD5 digester implementation in JavaScript",
-	"keywords": ["md5", "cryptography", "JavaScript", "ESNext", "ES6", "EcmaScript 2015", "CRAM-MD5"],
+	"keywords": [
+		"md5",
+		"cryptography",
+		"JavaScript",
+		"ESNext",
+		"ES6",
+		"EcmaScript 2015",
+		"CRAM-MD5"
+	],
 	"dependencies": {},
 	"devDependencies": {
 		"babel-cli": "^6.26.0",
-		"babel-core": "^6.26.0",
+		"babel-core": "^6.26.3",
 		"babel-plugin-transform-es2015-modules-umd": "^6.24.1",
-		"babel-preset-env": "^1.6.1",
+		"babel-preset-env": "^1.7.0",
 		"babel-preset-import-export": "^1.0.2",
 		"del": "^3.0.0",
 		"eslint": "^4.19.1",
 		"eslint-config-prettier": "^2.9.0",
 		"gulp": "^3.9.1",
 		"gulp-babel": "^7.0.1",
+		"gulp-concat": "^2.6.1",
+		"gulp-file": "^0.4.0",
 		"gulp-header": "^2.0.5",
-		"gulp-rename": "^1.2.2",
+		"gulp-rename": "^1.2.3",
 		"gulp-sourcemaps": "^2.6.4",
-		"jest": "^22.4.3",
-		"prettier": "^1.12.1"
+		"jest": "^22.4.4",
+		"prettier": "^1.13.4"
 	},
 	"scripts": {
 		"test": "jest",
@@ -37,10 +47,15 @@
 	},
 	"main": "dist/cram-md5-digest",
 	"jest": {
-		"testPathIgnorePatterns": ["/node_modules/", "/dist/"],
+		"testPathIgnorePatterns": [
+			"/node_modules/",
+			"/dist/"
+		],
 		"coverageDirectory": "./coverage/",
 		"collectCoverage": true,
-		"collectCoverageFrom": ["src/*"]
+		"collectCoverageFrom": [
+			"src/*"
+		]
 	},
 	"prettier": {
 		"printWidth": 120,
