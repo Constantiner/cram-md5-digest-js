@@ -1,5 +1,10 @@
 .vscode
-node_modules
-coverage
-dist
+/node_modules/
+/coverage/
 cram-md5-digest-*.tgz
+
+#distributive files
+/*.js
+/*.mjs
+/*.map
+!/gulpfile.js

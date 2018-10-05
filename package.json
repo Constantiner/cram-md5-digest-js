@@ -13,31 +13,33 @@
 	],
 	"dependencies": {},
 	"devDependencies": {
-		"babel-cli": "^6.26.0",
-		"babel-core": "^6.26.3",
-		"babel-plugin-transform-es2015-modules-umd": "^6.24.1",
-		"babel-preset-env": "^1.7.0",
+		"@babel/core": "^7.1.2",
+		"@babel/preset-env": "^7.1.0",
+		"@types/gulp": "^4.0.5",
+		"@types/jest": "^23.3.3",
 		"babel-preset-import-export": "^1.0.2",
 		"del": "^3.0.0",
 		"eslint": "^4.19.1",
-		"eslint-config-prettier": "^2.9.0",
-		"gulp": "^3.9.1",
-		"gulp-babel": "^7.0.1",
-		"gulp-concat": "^2.6.1",
-		"gulp-file": "^0.4.0",
-		"gulp-header": "^2.0.5",
-		"gulp-rename": "^1.2.3",
+		"eslint-config-prettier": "^2.10.0",
+		"gulp": "^4.0.0",
+		"gulp-better-rollup": "^3.3.0",
+		"gulp-rename": "^1.4.0",
 		"gulp-sourcemaps": "^2.6.4",
-		"gulp-uglify": "^3.0.0",
+		"gulp-uglify": "^3.0.1",
 		"jest": "^22.4.4",
-		"prettier": "^1.13.4"
+		"prettier": "^1.14.3",
+		"rollup": "^0.66.4",
+		"rollup-plugin-babel": "^4.0.3",
+		"through2": "^2.0.3"
 	},
 	"scripts": {
-		"test": "jest",
-		"lint": "eslint '**/*.js'",
-		"build": "gulp",
-		"format": "prettier 'src/*.js' --write",
-		"prepublishOnly": "npm run lint && npm run test && npm run build"
+		"test": "npx jest",
+		"lint": "npx eslint '**/*.js'",
+		"build": "npx gulp clean && npx gulp es6modules && npx gulp es5modules && npx gulp es5modulesMin",
+		"format": "npx prettier 'src/*.js' --write",
+		"prepublishOnly": "npm run  clean && npm run lint && npm run test && npm run build",
+		"clean": "npx gulp clean",
+		"clear_jest": "npx jest --clearCache"
 	},
 	"homepage": "https://github.com/Constantiner/cram-md5-digest-js.git",
 	"author": "Konstantin Kovalev <constantiner@gmail.com>",
@@ -46,17 +48,20 @@
 		"url": "https://github.com/Constantiner/cram-md5-digest-js.git",
 		"type": "git"
 	},
-	"main": "dist/cram-md5-digest",
+	"main": "cram-md5-digest",
 	"jest": {
 		"testPathIgnorePatterns": [
-			"/node_modules/",
-			"/dist/"
+			"/node_modules/"
 		],
 		"coverageDirectory": "./coverage/",
 		"collectCoverage": true,
 		"collectCoverageFrom": [
-			"src/*"
+			"src/**"
 		]
+	},
+	"engines": {
+		"node": ">=7.6",
+		"npm": ">=5.2.0"
 	},
 	"prettier": {
 		"printWidth": 120,
