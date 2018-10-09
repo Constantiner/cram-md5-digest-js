@@ -28,6 +28,7 @@
 		"gulp-uglify": "^3.0.1",
 		"jest": "^23.6.0",
 		"prettier": "^1.14.3",
+		"rollup": "^0.66.5",
 		"rollup-plugin-babel": "^4.0.3"
 	},
 	"scripts": {
