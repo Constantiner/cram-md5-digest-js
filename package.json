@@ -17,7 +17,8 @@
 		"@babel/preset-env": "^7.1.0",
 		"@types/gulp": "^4.0.5",
 		"@types/jest": "^23.3.3",
-		"babel-preset-import-export": "^1.0.2",
+		"babel-core": "^7.0.0-bridge.0",
+		"babel-jest": "^23.6.0",
 		"del": "^3.0.0",
 		"eslint": "^5.6.1",
 		"eslint-config-prettier": "^3.1.0",
@@ -27,12 +28,14 @@
 		"gulp-sourcemaps": "^2.6.4",
 		"gulp-uglify": "^3.0.1",
 		"jest": "^23.6.0",
+		"jest-pnp-resolver": "^1.0.1",
 		"prettier": "^1.14.3",
+		"regenerator-runtime": "^0.12.1",
 		"rollup": "^0.66.5",
 		"rollup-plugin-babel": "^4.0.3"
 	},
 	"scripts": {
-		"test": "npx jest",
+		"test": "npx jest --config jest.config.json",
 		"lint": "npx eslint '**/*.js'",
 		"build": "npx gulp clean && npx gulp es6modules && npx gulp es5modules && npx gulp es5modulesMin",
 		"format": "npx prettier 'src/*.js' --write",
@@ -48,16 +51,6 @@
 		"type": "git"
 	},
 	"main": "cram-md5-digest",
-	"jest": {
-		"testPathIgnorePatterns": [
-			"/node_modules/"
-		],
-		"coverageDirectory": "./coverage/",
-		"collectCoverage": true,
-		"collectCoverageFrom": [
-			"src/**"
-		]
-	},
 	"engines": {
 		"node": ">=7.6",
 		"npm": ">=5.2.0"

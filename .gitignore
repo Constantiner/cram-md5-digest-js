@@ -8,3 +8,4 @@ cram-md5-digest-*.tgz
 /*.mjs
 /*.map
 !/gulpfile.js
+!/babel.config.js
