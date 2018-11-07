@@ -31,7 +31,7 @@
 		"jest-pnp-resolver": "^1.0.1",
 		"prettier": "^1.14.3",
 		"regenerator-runtime": "^0.12.1",
-		"rollup": "^0.66.6",
+		"rollup": "^0.67.0",
 		"rollup-plugin-babel": "^4.0.3"
 	},
 	"scripts": {
