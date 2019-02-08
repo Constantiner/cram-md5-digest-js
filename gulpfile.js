@@ -7,6 +7,7 @@ const sourcemaps = require("gulp-sourcemaps");
 const uglify = require("gulp-uglify");
 const rollup = require("gulp-better-rollup");
 const fs = require("fs");
+const prettier = require("rollup-plugin-prettier");
 
 const { format } = require("date-fns");
 const getBuildDate = () => format(new Date(), "DD MMMM YYYY");
@@ -36,23 +37,25 @@ gulp.task("clean", () => del(["dist", "*.js", "*.mjs", "*.map", "!gulpfile.js", 
 
 const getSourceFile = () => gulp.src(SOURCES),
 	getDest = () => gulp.dest("."),
-	rollupUmdConfig = {
-		plugins: [
-			babel({
-				babelrc: false,
-				presets: [
-					[
-						"@babel/preset-env",
-						{
-							targets: {
-								browsers: BROWSERS
-							},
-							modules: false
-						}
-					]
-				]
-			})
+	babelConfig = {
+		babelrc: false,
+		presets: [
+			[
+				"@babel/preset-env",
+				{
+					targets: {
+						browsers: BROWSERS
+					},
+					modules: false
+				}
+			]
 		]
+	},
+	rollupUmdConfig = {
+		plugins: [babel(babelConfig)]
+	},
+	rollupUmdConfigWithPrettier = {
+		plugins: [babel(babelConfig), prettier(Object.assign({ parser: "babel" }, pkg.prettier))]
 	};
 
 gulp.task("es6modules", () =>
@@ -77,7 +80,7 @@ gulp.task("es5modules", () =>
 	getSourceFile()
 		.pipe(sourcemaps.init())
 		.pipe(
-			rollup(rollupUmdConfig, {
+			rollup(rollupUmdConfigWithPrettier, {
 				format: "umd",
 				banner: getActualBanner()
 			})
