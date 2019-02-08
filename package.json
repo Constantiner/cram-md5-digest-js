@@ -1,6 +1,6 @@
 {
 	"name": "@constantiner/cram-md5-digest",
-	"version": "0.9.6",
+	"version": "0.9.7",
 	"description": "CRAM-MD5 digester implementation in JavaScript",
 	"keywords": [
 		"md5",
