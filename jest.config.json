@@ -2,7 +2,6 @@
 	"collectCoverageFrom": ["<rootDir>/src/**/*.js"],
 	"coverageDirectory": "<rootDir>/coverage/",
 	"collectCoverage": true,
-	"resolver": "jest-pnp-resolver",
 	"testMatch": ["<rootDir>/__tests__/**/*.js"],
 	"testEnvironment": "node",
 	"transform": {

@@ -1,8 +1,18 @@
-module.exports = api => {
-	api.cache.never();
-	const config = {
-		presets: ["@babel/preset-env"],
-		plugins: []
-	};
-	return config;
+module.exports = {
+	babelrc: false,
+	presets: [],
+	env: {
+		test: {
+			presets: [
+				[
+					"@babel/preset-env",
+					{
+						targets: {
+							node: "current"
+						}
+					}
+				]
+			]
+		}
+	}
 };

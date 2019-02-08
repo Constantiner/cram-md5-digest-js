@@ -52,7 +52,7 @@ const range = (from, to) =>
 	],
 	initialNBits = code => nBitsMatches.find(([hexValue]) => code < hexValue)[1],
 	initialUtfTextForCodeMoreThan0x80 = (code, nBits) =>
-		((0xfe << (nBits % 6)) & 0xff) | (code >>> (Math.floor(nBits / 6) * 6)),
+		((0xfe << nBits % 6) & 0xff) | (code >>> (Math.floor(nBits / 6) * 6)),
 	utfTextForCodeMoreThan0x80 = code =>
 		(nBits => [
 			initialUtfTextForCodeMoreThan0x80(code, nBits),
@@ -92,7 +92,8 @@ const range = (from, to) =>
 	x = stateObj =>
 		getEmptyArray(16).map(
 			(_, j) =>
-				((stateObj.block[j * 4 + 3] * 256 + stateObj.block[j * 4 + 2]) * 256 + stateObj.block[j * 4 + 1]) * 256 +
+				((stateObj.block[j * 4 + 3] * 256 + stateObj.block[j * 4 + 2]) * 256 + stateObj.block[j * 4 + 1]) *
+					256 +
 				stateObj.block[j * 4]
 		),
 	//
@@ -177,9 +178,10 @@ const range = (from, to) =>
 	set32Little = (value, index) => array =>
 		range(0, 3).reduce((arr, i) => ((arr[index + i] = (value >>> (i * 8)) & 0xff), arr), [...array]),
 	getBits = stateObj =>
-		compose(set32Little(Math.floor(stateObj.byteCount * 8 / 0x100000000), 4), set32Little(stateObj.byteCount * 8, 0))(
-			getEmptyArray(8)
-		),
+		compose(
+			set32Little(Math.floor((stateObj.byteCount * 8) / 0x100000000), 4),
+			set32Little(stateObj.byteCount * 8, 0)
+		)(getEmptyArray(8)),
 	alignIndex = index =>
 		[[56, ind => 120 - ind], [-Infinity, ind => 56 - ind]].find(range => index >= range[0])[1](index),
 	getIndex = stateObj => alignIndex(stateObj.byteCount % 64),
@@ -194,7 +196,12 @@ const range = (from, to) =>
 		padding: [...stateObj.padding],
 		block: [...stateObj.block]
 	}),
-	finalDigest = stateObj => compose(getFinalDigestObj, update(getBits(stateObj)), updateWithIndex)(stateObj),
+	finalDigest = stateObj =>
+		compose(
+			getFinalDigestObj,
+			update(getBits(stateObj)),
+			updateWithIndex
+		)(stateObj),
 	hexByte = x => (x < 16 ? "0" : "") + x.toString(16),
 	toHexString = byteArray => byteArray.reduce((acc, x) => acc + hexByte(x), "").toLowerCase(),
 	finalHexDigest = stateObj => toHexString(finalDigest(stateObj).digest),
@@ -208,7 +215,12 @@ const range = (from, to) =>
 	performCram = (password, cramKey, stateObj) => {
 		const paddedKey = expandArrayTo64Length(
 			password.length > 64
-				? ((stateObj = compose(init, finalDigest, update(password))(stateObj)), stateObj.digest)
+				? ((stateObj = compose(
+						init,
+						finalDigest,
+						update(password)
+				  )(stateObj)),
+				  stateObj.digest)
 				: password
 		).map(sym => sym ^ 0x36);
 
