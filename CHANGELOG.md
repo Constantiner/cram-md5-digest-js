@@ -1,10 +1,18 @@
 # Change Log
 
+## [0.9.7](https://github.com/Constantiner/cram-md5-digest-js/tree/0.9.7) (2019-02-08)
+[Full Changelog](https://github.com/Constantiner/cram-md5-digest-js/compare/0.9.6...0.9.7)
+
+**Merged pull requests:**
+
+- Create changelog file [\#6](https://github.com/Constantiner/cram-md5-digest-js/pull/6) ([Constantiner](https://github.com/Constantiner))
+
 ## [0.9.6](https://github.com/Constantiner/cram-md5-digest-js/tree/0.9.6) (2019-02-08)
 [Full Changelog](https://github.com/Constantiner/cram-md5-digest-js/compare/0.9.5...0.9.6)
 
 **Implemented enhancements:**
 
+- Create changelog file [\#3](https://github.com/Constantiner/cram-md5-digest-js/issues/3)
 - Format non minified distribution files with Prettier [\#2](https://github.com/Constantiner/cram-md5-digest-js/issues/2)
 - Include license text in distribution files header [\#1](https://github.com/Constantiner/cram-md5-digest-js/issues/1)
 
