@@ -9,3 +9,4 @@ gulpfile.js
 babel.config.js
 cram-md5-digest-*.tgz
 scripts
+jest.config.json
