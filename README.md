@@ -7,6 +7,7 @@ It uses a digest string from server and generates a hash using a secret (usually
 The library supports converting the resulting hash to Base64-encoded string.
 
 - [Installation](#installation)
+- [Changelog](#changelog)
 - [Usage](#usage)
 - [Documentation](#documentation)
 	- [cramMd5Digest](#crammd5digest)
@@ -17,6 +18,10 @@ The library supports converting the resulting hash to Base64-encoded string.
 ```
 npm install @constantiner/cram-md5-digest
 ```
+
+## Changelog
+
+Versions [changelog](CHANGELOG.md).
 
 ## Usage
 
