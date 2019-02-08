@@ -6,20 +6,31 @@ const del = require("del");
 const sourcemaps = require("gulp-sourcemaps");
 const uglify = require("gulp-uglify");
 const rollup = require("gulp-better-rollup");
+const fs = require("fs");
+
+const { format } = require("date-fns");
+const getBuildDate = () => format(new Date(), "DD MMMM YYYY");
+
+const getActualBanner = () => {
+	const licenseText = fs.readFileSync("./LICENSE", "utf-8");
+	const banner = `/**
+ * ${pkg.name}
+ * ${pkg.description}
+ * 
+ * @author ${pkg.author.name} <${pkg.author.email}>
+ * @version v${pkg.version}
+ * @link ${pkg.homepage}
+ * @date ${getBuildDate()}
+ * 
+${licenseText.replace(/^/gm, " * ")}
+ */
+
+`;
+	return banner;
+};
 
 const BROWSERS = [">0.25%", "not ie 11", "not op_mini all"];
 const SOURCES = "src/*.js";
-const banner = `/**
-* ${pkg.name}
-* ${pkg.description}
-* 
-* @author ${pkg.author}
-* @version v${pkg.version}
-* @link ${pkg.homepage}
-* @license ${pkg.license}
-*/
-
-`;
 
 gulp.task("clean", () => del(["dist", "*.js", "*.mjs", "*.map", "!gulpfile.js", "!babel.config.js"]));
 
@@ -53,7 +64,7 @@ gulp.task("es6modules", () =>
 				},
 				{
 					format: "es",
-					banner
+					banner: getActualBanner()
 				}
 			)
 		)
@@ -68,7 +79,7 @@ gulp.task("es5modules", () =>
 		.pipe(
 			rollup(rollupUmdConfig, {
 				format: "umd",
-				banner
+				banner: getActualBanner()
 			})
 		)
 		.pipe(
@@ -87,7 +98,7 @@ gulp.task("es5modulesMin", () =>
 		.pipe(
 			rollup(rollupUmdConfig, {
 				format: "umd",
-				banner
+				banner: getActualBanner()
 			})
 		)
 		.pipe(uglify())
