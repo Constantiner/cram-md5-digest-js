@@ -10,7 +10,7 @@ const fs = require("fs");
 const prettier = require("rollup-plugin-prettier");
 
 const { format } = require("date-fns");
-const getBuildDate = () => format(new Date(), "DD MMMM YYYY");
+const getBuildDate = () => format(new Date(), "dd MMMM yyyy");
 
 const getActualBanner = () => {
 	const licenseText = fs.readFileSync("./LICENSE", "utf-8");
