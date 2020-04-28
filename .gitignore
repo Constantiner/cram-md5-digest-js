@@ -4,8 +4,12 @@
 cram-md5-digest-*.tgz
 
 #distributive files
+browser
+esm
+dist
 /*.js
 /*.mjs
 /*.map
 !/gulpfile.js
 !/babel.config.js
+!/rollup.config.js

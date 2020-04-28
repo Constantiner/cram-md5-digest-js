@@ -183,7 +183,10 @@ const range = (from, to) =>
 			set32Little(stateObj.byteCount * 8, 0)
 		)(getEmptyArray(8)),
 	alignIndex = index =>
-		[[56, ind => 120 - ind], [-Infinity, ind => 56 - ind]].find(range => index >= range[0])[1](index),
+		[
+			[56, ind => 120 - ind],
+			[-Infinity, ind => 56 - ind]
+		].find(range => index >= range[0])[1](index),
 	getIndex = stateObj => alignIndex(stateObj.byteCount % 64),
 	updateWithIndex = stateObj => update(stateObj.padding, getIndex(stateObj))(stateObj),
 	getFinalDigestObj = stateObj => ({
@@ -196,12 +199,7 @@ const range = (from, to) =>
 		padding: [...stateObj.padding],
 		block: [...stateObj.block]
 	}),
-	finalDigest = stateObj =>
-		compose(
-			getFinalDigestObj,
-			update(getBits(stateObj)),
-			updateWithIndex
-		)(stateObj),
+	finalDigest = stateObj => compose(getFinalDigestObj, update(getBits(stateObj)), updateWithIndex)(stateObj),
 	hexByte = x => (x < 16 ? "0" : "") + x.toString(16),
 	toHexString = byteArray => byteArray.reduce((acc, x) => acc + hexByte(x), "").toLowerCase(),
 	finalHexDigest = stateObj => toHexString(finalDigest(stateObj).digest),
@@ -215,12 +213,7 @@ const range = (from, to) =>
 	performCram = (password, cramKey, stateObj) => {
 		const paddedKey = expandArrayTo64Length(
 			password.length > 64
-				? ((stateObj = compose(
-						init,
-						finalDigest,
-						update(password)
-				  )(stateObj)),
-				  stateObj.digest)
+				? ((stateObj = compose(init, finalDigest, update(password))(stateObj)), stateObj.digest)
 				: password
 		).map(sym => sym ^ 0x36);
 
@@ -279,6 +272,9 @@ const range = (from, to) =>
 	 * @returns {string} Is resulting hash.
 	 */
 	cramMd5DigestBase64 = (passwordString, cramKey, padding = false) =>
-		base64Encode(Array.from(cramMd5Digest(passwordString, cramKey)).map(char => char.charCodeAt(0)), padding);
+		base64Encode(
+			Array.from(cramMd5Digest(passwordString, cramKey)).map(char => char.charCodeAt(0)),
+			padding
+		);
 
 export { cramMd5Digest, cramMd5DigestBase64 };
