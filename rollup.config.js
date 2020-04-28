@@ -63,13 +63,7 @@ const getUMDBabelConfig = () =>
 	});
 
 const getSourceFilesList = () => globby(["src/*.js"]);
-const getFileName = file =>
-	file
-		.split("/")
-		.pop()
-		.split(".")
-		.slice(0, -1)
-		.join(".");
+const getFileName = file => file.split("/").pop().split(".").slice(0, -1).join(".");
 const getOutput = (input, extension) => `${getFileName(input)}.${extension}`;
 const getUmdOutput = (input, minified = false) => `${getFileName(input)}${minified ? ".min" : ""}.js`;
 
