@@ -35,7 +35,7 @@ const range = (from, to) =>
 			padding: getEmptyArray(64).map((_, index) => (index === 0 ? 0x80 : 0)),
 			block: getEmptyArray(64)
 		}),
-	nBitsGenerator = function*(nBits) {
+	nBitsGenerator = function* (nBits) {
 		while (nBits >= 6) {
 			nBits = (Math.floor(nBits / 6) - 1) * 6;
 			yield nBits;
