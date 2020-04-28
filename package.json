@@ -62,12 +62,5 @@
 	"engines": {
 		"node": ">=7.6",
 		"npm": ">=5.2.0"
-	},
-	"prettier": {
-		"printWidth": 120,
-		"useTabs": true,
-		"tabWidth": 4,
-		"trailingComma": "none",
-		"arrowParens": "avoid"
 	}
 }
