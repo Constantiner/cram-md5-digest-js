@@ -1,5 +1,7 @@
 # cram-md5-digest-js<!-- omit in toc -->
 
+[![Build Status](https://travis-ci.org/Constantiner/cram-md5-digest-js.svg?branch=master)](https://travis-ci.org/Constantiner/cram-md5-digest-js) [![codecov](https://codecov.io/gh/Constantiner/cram-md5-digest-js/branch/master/graph/badge.svg)](https://codecov.io/gh/Constantiner/cram-md5-digest-js)
+
 [CRAM-MD5](https://en.wikipedia.org/wiki/CRAM-MD5) digester implementation in JavaScript with zero dependencies.
 
 It uses a digest string from server and generates a hash using a secret (usually, password).
