@@ -19,7 +19,7 @@ script:
     - npm run test:coverage
     - npm run build
     - npm run validate:sourcemaps
-    # - npm run changelog
+    - npm run changelog
     - codecov
 
 branches:
