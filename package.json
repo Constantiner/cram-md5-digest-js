@@ -17,6 +17,8 @@
 		"@babel/preset-env": "^7.9.5",
 		"@constantiner/resolve-node-configs-hierarchy": "^0.4.6",
 		"@types/jest": "^25.2.1",
+		"@typescript-eslint/eslint-plugin": "^2.31.0",
+		"@typescript-eslint/parser": "^2.31.0",
 		"babel-jest": "^25.4.0",
 		"date-fns": "^2.12.0",
 		"del": "^5.1.0",
@@ -35,7 +37,8 @@
 		"rollup-plugin-sourcemaps": "^0.5.0",
 		"rollup-plugin-terser": "^5.3.0",
 		"rollup-plugin-uglify": "^6.0.4",
-		"sourcemap-validator": "^2.1.0"
+		"sourcemap-validator": "^2.1.0",
+		"typescript": "^3.8.3"
 	},
 	"scripts": {
 		"test": "node -r esm scripts/unitTest.js",
@@ -43,6 +46,7 @@
 		"test:watch": "node -r esm scripts/unitTestWatch.js",
 		"lint": "npx eslint '**/*.js'",
 		"build": "npm run clean && npx rollup -c ./rollup.config.js",
+		"build:ts": "npx tsc --rootDir ./src",
 		"format": "npx prettier --write '{{src,__tests__,scripts}/**/*.js,rollup.config.js,babel.config.js,jest.config.js}'",
 		"prepublishOnly": "npm run clean && npm run lint && npm run test && npm run build",
 		"clean": "node -r esm scripts/clean.js",
@@ -67,7 +71,7 @@
 		"type": "git"
 	},
 	"main": "dist/cram-md5-digest.js",
-	"module": "esm/cram-md5-digest.js",
+	"types": "types/cram-md5-digest.d.ts",
 	"engines": {
 		"node": ">=7.6",
 		"npm": ">=5.2.0"

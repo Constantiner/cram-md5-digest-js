@@ -58,7 +58,7 @@ const range = (from, to) =>
 			initialUtfTextForCodeMoreThan0x80(code, nBits),
 			...[...nBitsGenerator(nBits)].map(utfTextValue(code))
 		])(initialNBits(code)),
-	toUTFArray = stringToEncode =>
+	toUTFArray = (stringToEncode: string) =>
 		Array.from(stringToEncode)
 			.map(x => x.charCodeAt(0))
 			.reduce((utfText, code) => [...utfText, ...(code < 0x80 ? [code] : utfTextForCodeMoreThan0x80(code))], []),
@@ -182,11 +182,11 @@ const range = (from, to) =>
 			set32Little(Math.floor((stateObj.byteCount * 8) / 0x100000000), 4),
 			set32Little(stateObj.byteCount * 8, 0)
 		)(getEmptyArray(8)),
-	alignIndex = index =>
-		[
-			[56, ind => 120 - ind],
-			[-Infinity, ind => 56 - ind]
-		].find(range => index >= range[0])[1](index),
+	alignIndex = (index: number): number =>
+		([
+			[56, (ind: number): number => 120 - ind],
+			[-Infinity, (ind: number): number => 56 - ind]
+		].find((range: [number, (ind: number) => number]) => index >= range[0])[1] as (ind: number) => number)(index),
 	getIndex = stateObj => alignIndex(stateObj.byteCount % 64),
 	updateWithIndex = stateObj => update(stateObj.padding, getIndex(stateObj))(stateObj),
 	getFinalDigestObj = stateObj => ({
@@ -235,23 +235,24 @@ const range = (from, to) =>
 	 * @param {string} cramKey Is a key (digest) to hash password with.
 	 * @returns {string} Is resulting hash.
 	 */
-	cramMd5Digest = (passwordString, cramKey) => performCram(toUTFArray(passwordString), cramKey, initialInit()),
+	cramMd5Digest = (passwordString: string, cramKey: string): string =>
+		performCram(toUTFArray(passwordString), cramKey, initialInit()),
 	encodeTable = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/",
-	getPaddingSymbol = padding => (padding ? "=" : ""),
-	postBase64Actions = (base64Sequence, encodeTable, md5Binary, padding) =>
+	getPaddingSymbol = (padding: boolean): "=" | "" => (padding ? "=" : ""),
+	postBase64Actions = (base64Sequence: string, encodeTable: string, md5Binary: number[], padding: boolean): string =>
 		base64Sequence +
 		encodeTable.charAt(md5Binary[30] >>> 2) +
 		encodeTable.charAt(((md5Binary[30] << 4) & 0x30) | (md5Binary[30 + 1] >>> 4)) +
 		encodeTable.charAt((md5Binary[31] << 2) & 0x3c) +
 		getPaddingSymbol(padding),
-	base64EncodeIndexGenerator = () =>
+	base64EncodeIndexGenerator = (): number[] =>
 		Array.from(
 			{
 				length: 10
 			},
 			(_, i) => i * 3
 		),
-	getBase64Sequence = md5Binary =>
+	getBase64Sequence = (md5Binary: number[]): string =>
 		base64EncodeIndexGenerator().reduce(
 			(result, index) =>
 				result +
@@ -261,7 +262,7 @@ const range = (from, to) =>
 				encodeTable.charAt(md5Binary[index + 2] & 0x3f),
 			""
 		),
-	base64Encode = (md5Binary, padding) =>
+	base64Encode = (md5Binary: number[], padding: boolean): string =>
 		postBase64Actions(getBase64Sequence(md5Binary), encodeTable, md5Binary, padding),
 	/**
 	 * Generates MD5 hash from passwordString and cramKey and encodes it in Base64.
@@ -271,7 +272,7 @@ const range = (from, to) =>
 	 * @param {boolean} [padding=false] If true there is Base64 padding (=) added.
 	 * @returns {string} Is resulting hash.
 	 */
-	cramMd5DigestBase64 = (passwordString, cramKey, padding = false) =>
+	cramMd5DigestBase64 = (passwordString: string, cramKey: string, padding = false): string =>
 		base64Encode(
 			Array.from(cramMd5Digest(passwordString, cramKey)).map(char => char.charCodeAt(0)),
 			padding
