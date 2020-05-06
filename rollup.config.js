@@ -31,10 +31,9 @@ const config = (format, folder) => input => ({
 	input,
 	output: {
 		format,
-		sourcemap: format !== "es",
+		sourcemap: true,
 		strict: true,
 		banner: getActualBanner(),
-		name: format === "umd" ? "cramMd5Digest" : undefined,
 		dir: folder
 	},
 	plugins: [typescript({ declarationDir: folder }), prettier()]

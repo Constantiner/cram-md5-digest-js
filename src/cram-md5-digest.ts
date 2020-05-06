@@ -1,4 +1,30 @@
-const range = (from, to) =>
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Lookup<T, K extends keyof any, Else = never> = K extends keyof T ? T[K] : Else;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Tail<T extends any[]> = ((...t: T) => void) extends (x: any, ...u: infer U) => void ? U : never;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type Func1 = (arg: any) => any;
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type ArgType<F, Else = never> = F extends (arg: infer A) => any ? A : Else;
+type AsChain<F extends [Func1, ...Func1[]], G extends Func1[] = Tail<F>> = {
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	[K in keyof F]: (arg: ArgType<F[K]>) => ArgType<Lookup<G, K, any>, any>;
+};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type LastIndexOf<T extends any[]> = ((...x: T) => void) extends (y: any, ...z: infer U) => void ? U["length"] : never;
+type Block = [number, number, number, number, number, number[]];
+interface State {
+	byteCount?: number;
+	state0?: number;
+	state1?: number;
+	state2?: number;
+	state3?: number;
+	block?: number[];
+	padding?: number[];
+	digest?: number[];
+}
+
+const range = (from: number, to: number): number[] =>
 		Array.from(
 			{
 				length: to - from + 1
@@ -7,12 +33,16 @@ const range = (from, to) =>
 		),
 	range64 = range(0, 63),
 	T = range64.map(i => (Math.abs(Math.sin(i + 1)) * 0x100000000) | 0),
-	pipe = (...fns) => fns.reduceRight((f, g) => value => f(g(value))),
-	getEmptyArray = length =>
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
+	pipe = <F extends [(arg: any) => any, ...Array<(arg: any) => any>]>(
+		...fns: F & AsChain<F>
+	): // eslint-disable-next-line @typescript-eslint/explicit-function-return-type
+	((arg: ArgType<F[0]>) => ReturnType<F[LastIndexOf<F>]>) => fns.reduceRight((f, g) => value => f(g(value))),
+	getEmptyArray = (length: number): number[] =>
 		Array.from({
 			length
 		}),
-	copyState = (source, overridesObj = {}) =>
+	copyState = (source: State, overridesObj: Partial<State> = {}): State =>
 		Object.assign(
 			{},
 			source,
@@ -22,7 +52,7 @@ const range = (from, to) =>
 			},
 			overridesObj
 		),
-	init = initObj =>
+	init = (initObj: State): State =>
 		copyState(initObj, {
 			byteCount: 0,
 			state0: 0x67452301,
@@ -30,18 +60,18 @@ const range = (from, to) =>
 			state2: 0x98badcfe,
 			state3: 0x10325476
 		}),
-	initialInit = () =>
+	initialInit = (): State =>
 		init({
 			padding: getEmptyArray(64).map((_, index) => (index === 0 ? 0x80 : 0)),
 			block: getEmptyArray(64)
 		}),
-	nBitsGenerator = function* (nBits) {
+	nBitsGenerator = function* (nBits: number): Generator<number, void, boolean> {
 		while (nBits >= 6) {
 			nBits = (Math.floor(nBits / 6) - 1) * 6;
 			yield nBits;
 		}
 	},
-	utfTextValue = code => nBits => 0x80 + ((code >>> nBits) & 0x3f),
+	utfTextValue = (code: number) => (nBits: number): number => 0x80 + ((code >>> nBits) & 0x3f),
 	nBitsMatches = [
 		[0x00000800, 11],
 		[0x00010000, 16],
@@ -50,46 +80,46 @@ const range = (from, to) =>
 		[0x80000000, 31],
 		[Infinity, 0]
 	],
-	initialNBits = code => nBitsMatches.find(([hexValue]) => code < hexValue)[1],
-	initialUtfTextForCodeMoreThan0x80 = (code, nBits) =>
+	initialNBits = (code: number): number => nBitsMatches.find(([hexValue]) => code < hexValue)[1],
+	initialUtfTextForCodeMoreThan0x80 = (code: number, nBits: number): number =>
 		((0xfe << nBits % 6) & 0xff) | (code >>> (Math.floor(nBits / 6) * 6)),
-	utfTextForCodeMoreThan0x80 = code =>
-		(nBits => [
+	utfTextForCodeMoreThan0x80 = (code: number): number[] =>
+		((nBits: number): number[] => [
 			initialUtfTextForCodeMoreThan0x80(code, nBits),
 			...[...nBitsGenerator(nBits)].map(utfTextValue(code))
 		])(initialNBits(code)),
-	toUTFArray = (stringToEncode: string) =>
+	toUTFArray = (stringToEncode: string): number[] =>
 		Array.from(stringToEncode)
 			.map(x => x.charCodeAt(0))
 			.reduce((utfText, code) => [...utfText, ...(code < 0x80 ? [code] : utfTextForCodeMoreThan0x80(code))], []),
-	toUnsigned = x => (x + 0x100000000) % 0x100000000,
-	lShift = (x, s) => (x << s) | (x >>> (32 - s)),
+	toUnsigned = (x: number): number => (x + 0x100000000) % 0x100000000,
+	lShift = (x: number, s: number): number => (x << s) | (x >>> (32 - s)),
 	// F, G, H and I are basic MD5 functions.
-	F = (X, Y, Z) => toUnsigned((X & Y) | (~X & Z)),
-	G = (X, Y, Z) => toUnsigned((X & Z) | (Y & ~Z)),
-	H = (X, Y, Z) => toUnsigned(X ^ Y ^ Z),
-	I = (X, Y, Z) => toUnsigned(Y ^ (X | ~Z)),
+	F = (X: number, Y: number, Z: number): number => toUnsigned((X & Y) | (~X & Z)),
+	G = (X: number, Y: number, Z: number): number => toUnsigned((X & Z) | (Y & ~Z)),
+	H = (X: number, Y: number, Z: number): number => toUnsigned(X ^ Y ^ Z),
+	I = (X: number, Y: number, Z: number): number => toUnsigned(Y ^ (X | ~Z)),
 	// FF, GG, HH, and II transformations for rounds 1-4.
-	XX = func => (xi, s) => ([a, b, c, d, i, x]) => [
-		d,
-		toUnsigned(lShift(a + func(b, c, d) + x[xi] + T[i], s) + b),
+	XX = (func: (X: number, Y: number, Z: number) => number) => (xi: number, s: number) => ([
+		a,
 		b,
 		c,
-		i + 1,
+		d,
+		i,
 		x
-	],
+	]: Block): Block => [d, toUnsigned(lShift(a + func(b, c, d) + x[xi] + T[i], s) + b), b, c, i + 1, x],
 	FF = XX(F),
 	GG = XX(G),
 	HH = XX(H),
 	II = XX(I),
-	modifyStates = stateObj => ([a, b, c, d]) =>
+	modifyStates = stateObj => ([a, b, c, d]: Block): State =>
 		copyState(stateObj, {
 			state0: toUnsigned(stateObj.state0 + a),
 			state1: toUnsigned(stateObj.state1 + b),
 			state2: toUnsigned(stateObj.state2 + c),
 			state3: toUnsigned(stateObj.state3 + d)
 		}),
-	x = stateObj =>
+	x = (stateObj: State): number[] =>
 		getEmptyArray(16).map(
 			(_, j) =>
 				((stateObj.block[j * 4 + 3] * 256 + stateObj.block[j * 4 + 2]) * 256 + stateObj.block[j * 4 + 1]) *
@@ -99,7 +129,7 @@ const range = (from, to) =>
 	//
 	// MD5 basic transformation. Transforms state based on block.
 	//
-	transformBlock = stateObj =>
+	transformBlock = (stateObj: State): State =>
 		pipe(
 			FF(0, 7),
 			FF(1, 12),
@@ -166,8 +196,8 @@ const range = (from, to) =>
 			II(2, 15),
 			II(9, 21),
 			modifyStates(stateObj)
-		)([stateObj.state0, stateObj.state1, stateObj.state2, stateObj.state3, 0, x(stateObj)]),
-	update = (inputArray, inputLength = inputArray.length) => stateObj =>
+		)([stateObj.state0, stateObj.state1, stateObj.state2, stateObj.state3, 0, x(stateObj)] as Block),
+	update = (inputArray: number[], inputLength: number = inputArray.length) => (stateObj: State): State =>
 		inputArray.slice(0, inputLength).reduce((stateObj, item) => {
 			stateObj.block[stateObj.byteCount % 64] = item;
 			if (++stateObj.byteCount % 64 === 0) {
@@ -175,9 +205,9 @@ const range = (from, to) =>
 			}
 			return stateObj;
 		}, copyState(stateObj)),
-	set32Little = (value, index) => array =>
+	set32Little = (value: number, index: number) => (array: number[]): number[] =>
 		range(0, 3).reduce((arr, i) => ((arr[index + i] = (value >>> (i * 8)) & 0xff), arr), [...array]),
-	getBits = stateObj =>
+	getBits = (stateObj: State): number[] =>
 		pipe(
 			set32Little(stateObj.byteCount * 8, 0),
 			set32Little(Math.floor((stateObj.byteCount * 8) / 0x100000000), 4)
@@ -187,9 +217,9 @@ const range = (from, to) =>
 			[56, (ind: number): number => 120 - ind],
 			[-Infinity, (ind: number): number => 56 - ind]
 		].find((range: [number, (ind: number) => number]) => index >= range[0])[1] as (ind: number) => number)(index),
-	getIndex = stateObj => alignIndex(stateObj.byteCount % 64),
-	updateWithIndex = stateObj => update(stateObj.padding, getIndex(stateObj))(stateObj),
-	getFinalDigestObj = stateObj => ({
+	getIndex = (stateObj: State): number => alignIndex(stateObj.byteCount % 64),
+	updateWithIndex = (stateObj: State): State => update(stateObj.padding, getIndex(stateObj))(stateObj),
+	getFinalDigestObj = (stateObj: State): State => ({
 		digest: pipe(
 			set32Little(stateObj.state0, 0),
 			set32Little(stateObj.state1, 4),
@@ -199,22 +229,23 @@ const range = (from, to) =>
 		padding: [...stateObj.padding],
 		block: [...stateObj.block]
 	}),
-	finalDigest = stateObj => pipe(updateWithIndex, update(getBits(stateObj)), getFinalDigestObj)(stateObj),
-	hexByte = x => (x < 16 ? "0" : "") + x.toString(16),
-	toHexString = byteArray => byteArray.reduce((acc, x) => acc + hexByte(x), "").toLowerCase(),
-	finalHexDigest = stateObj => toHexString(finalDigest(stateObj).digest),
-	expandArrayTo64Length = original => [
+	finalDigest = (stateObj: State): State =>
+		pipe(updateWithIndex, update(getBits(stateObj)), getFinalDigestObj)(stateObj),
+	hexByte = (x: number): string => (x < 16 ? "0" : "") + x.toString(16),
+	toHexString = (byteArray: number[]): string => byteArray.reduce((acc, x) => acc + hexByte(x), "").toLowerCase(),
+	finalHexDigest = (stateObj: State): string => toHexString(finalDigest(stateObj).digest),
+	expandArrayTo64Length = (original: number[]): number[] => [
 		...original,
-		...Array.from({
+		...(Array.from({
 			length: 64 - original.length
-		}).fill(0)
+		}).fill(0) as number[])
 	],
-	updateWithDigest = stateObj => update(stateObj.digest)(stateObj),
-	performCram = (password, cramKey, stateObj) => {
-		const paddedKey = expandArrayTo64Length(
-			password.length > 64
-				? ((stateObj = pipe(update(password), finalDigest, init)(stateObj)), stateObj.digest)
-				: password
+	updateWithDigest = (stateObj: State): State => update(stateObj.digest)(stateObj),
+	performCram = (passwordAsUTFArray: number[], cramKey: string, stateObj: State): string => {
+		const paddedKey: number[] = expandArrayTo64Length(
+			passwordAsUTFArray.length > 64
+				? ((stateObj = pipe(update(passwordAsUTFArray), finalDigest, init)(stateObj)), stateObj.digest)
+				: passwordAsUTFArray
 		).map(sym => sym ^ 0x36);
 
 		// H(K XOR ipad, text) -> digest
