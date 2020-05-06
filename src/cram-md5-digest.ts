@@ -7,7 +7,7 @@ const range = (from, to) =>
 		),
 	range64 = range(0, 63),
 	T = range64.map(i => (Math.abs(Math.sin(i + 1)) * 0x100000000) | 0),
-	compose = (...fns) => fns.reduce((f, g) => (...args) => f(g(...args))),
+	pipe = (...fns) => fns.reduceRight((f, g) => value => f(g(value))),
 	getEmptyArray = length =>
 		Array.from({
 			length
@@ -100,72 +100,72 @@ const range = (from, to) =>
 	// MD5 basic transformation. Transforms state based on block.
 	//
 	transformBlock = stateObj =>
-		compose(
-			modifyStates(stateObj),
-			II(9, 21),
-			II(2, 15),
-			II(11, 10),
-			II(4, 6),
-			II(13, 21),
-			II(6, 15),
-			II(15, 10),
-			II(8, 6),
-			II(1, 21),
-			II(10, 15),
-			II(3, 10),
-			II(12, 6),
-			II(5, 21),
-			II(14, 15),
-			II(7, 10),
-			II(0, 6),
-			HH(2, 23),
-			HH(15, 16),
-			HH(12, 11),
-			HH(9, 4),
-			HH(6, 23),
-			HH(3, 16),
-			HH(0, 11),
-			HH(13, 4),
-			HH(10, 23),
-			HH(7, 16),
-			HH(4, 11),
-			HH(1, 4),
-			HH(14, 23),
-			HH(11, 16),
-			HH(8, 11),
-			HH(5, 4),
-			GG(12, 20),
-			GG(7, 14),
-			GG(2, 9),
-			GG(13, 5),
-			GG(8, 20),
-			GG(3, 14),
-			GG(14, 9),
-			GG(9, 5),
-			GG(4, 20),
-			GG(15, 14),
-			GG(10, 9),
-			GG(5, 5),
-			GG(0, 20),
-			GG(11, 14),
-			GG(6, 9),
-			GG(1, 5),
-			FF(15, 22),
-			FF(14, 17),
-			FF(13, 12),
-			FF(12, 7),
-			FF(11, 22),
-			FF(10, 17),
-			FF(9, 12),
-			FF(8, 7),
-			FF(7, 22),
-			FF(6, 17),
-			FF(5, 12),
-			FF(4, 7),
-			FF(3, 22),
-			FF(2, 17),
+		pipe(
+			FF(0, 7),
 			FF(1, 12),
-			FF(0, 7)
+			FF(2, 17),
+			FF(3, 22),
+			FF(4, 7),
+			FF(5, 12),
+			FF(6, 17),
+			FF(7, 22),
+			FF(8, 7),
+			FF(9, 12),
+			FF(10, 17),
+			FF(11, 22),
+			FF(12, 7),
+			FF(13, 12),
+			FF(14, 17),
+			FF(15, 22),
+			GG(1, 5),
+			GG(6, 9),
+			GG(11, 14),
+			GG(0, 20),
+			GG(5, 5),
+			GG(10, 9),
+			GG(15, 14),
+			GG(4, 20),
+			GG(9, 5),
+			GG(14, 9),
+			GG(3, 14),
+			GG(8, 20),
+			GG(13, 5),
+			GG(2, 9),
+			GG(7, 14),
+			GG(12, 20),
+			HH(5, 4),
+			HH(8, 11),
+			HH(11, 16),
+			HH(14, 23),
+			HH(1, 4),
+			HH(4, 11),
+			HH(7, 16),
+			HH(10, 23),
+			HH(13, 4),
+			HH(0, 11),
+			HH(3, 16),
+			HH(6, 23),
+			HH(9, 4),
+			HH(12, 11),
+			HH(15, 16),
+			HH(2, 23),
+			II(0, 6),
+			II(7, 10),
+			II(14, 15),
+			II(5, 21),
+			II(12, 6),
+			II(3, 10),
+			II(10, 15),
+			II(1, 21),
+			II(8, 6),
+			II(15, 10),
+			II(6, 15),
+			II(13, 21),
+			II(4, 6),
+			II(11, 10),
+			II(2, 15),
+			II(9, 21),
+			modifyStates(stateObj)
 		)([stateObj.state0, stateObj.state1, stateObj.state2, stateObj.state3, 0, x(stateObj)]),
 	update = (inputArray, inputLength = inputArray.length) => stateObj =>
 		inputArray.slice(0, inputLength).reduce((stateObj, item) => {
@@ -178,9 +178,9 @@ const range = (from, to) =>
 	set32Little = (value, index) => array =>
 		range(0, 3).reduce((arr, i) => ((arr[index + i] = (value >>> (i * 8)) & 0xff), arr), [...array]),
 	getBits = stateObj =>
-		compose(
-			set32Little(Math.floor((stateObj.byteCount * 8) / 0x100000000), 4),
-			set32Little(stateObj.byteCount * 8, 0)
+		pipe(
+			set32Little(stateObj.byteCount * 8, 0),
+			set32Little(Math.floor((stateObj.byteCount * 8) / 0x100000000), 4)
 		)(getEmptyArray(8)),
 	alignIndex = (index: number): number =>
 		([
@@ -190,16 +190,16 @@ const range = (from, to) =>
 	getIndex = stateObj => alignIndex(stateObj.byteCount % 64),
 	updateWithIndex = stateObj => update(stateObj.padding, getIndex(stateObj))(stateObj),
 	getFinalDigestObj = stateObj => ({
-		digest: compose(
-			set32Little(stateObj.state3, 12),
-			set32Little(stateObj.state2, 8),
+		digest: pipe(
+			set32Little(stateObj.state0, 0),
 			set32Little(stateObj.state1, 4),
-			set32Little(stateObj.state0, 0)
+			set32Little(stateObj.state2, 8),
+			set32Little(stateObj.state3, 12)
 		)(getEmptyArray(16)),
 		padding: [...stateObj.padding],
 		block: [...stateObj.block]
 	}),
-	finalDigest = stateObj => compose(getFinalDigestObj, update(getBits(stateObj)), updateWithIndex)(stateObj),
+	finalDigest = stateObj => pipe(updateWithIndex, update(getBits(stateObj)), getFinalDigestObj)(stateObj),
 	hexByte = x => (x < 16 ? "0" : "") + x.toString(16),
 	toHexString = byteArray => byteArray.reduce((acc, x) => acc + hexByte(x), "").toLowerCase(),
 	finalHexDigest = stateObj => toHexString(finalDigest(stateObj).digest),
@@ -213,19 +213,19 @@ const range = (from, to) =>
 	performCram = (password, cramKey, stateObj) => {
 		const paddedKey = expandArrayTo64Length(
 			password.length > 64
-				? ((stateObj = compose(init, finalDigest, update(password))(stateObj)), stateObj.digest)
+				? ((stateObj = pipe(update(password), finalDigest, init)(stateObj)), stateObj.digest)
 				: password
 		).map(sym => sym ^ 0x36);
 
 		// H(K XOR ipad, text) -> digest
-		return compose(
-			finalHexDigest,
-			updateWithDigest,
-			update(paddedKey.map(sym => sym ^ 0x36 ^ 0x5c)),
-			init,
-			finalDigest,
+		return pipe(
+			update(paddedKey),
 			update(toUTFArray(cramKey)),
-			update(paddedKey)
+			finalDigest,
+			init,
+			update(paddedKey.map(sym => sym ^ 0x36 ^ 0x5c)),
+			updateWithDigest,
+			finalHexDigest
 		)(stateObj);
 	},
 	/**
