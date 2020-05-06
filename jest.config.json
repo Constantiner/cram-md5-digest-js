@@ -1,5 +1,5 @@
 {
-	"collectCoverageFrom": ["<rootDir>/src/**/*.js"],
+	"collectCoverageFrom": ["<rootDir>/src/**/*.{js,ts}"],
 	"coverageDirectory": "<rootDir>/coverage/",
 	"coverageThreshold": {
 		"global": {
@@ -10,10 +10,16 @@
 		}
 	},
 	"collectCoverage": false,
-	"testMatch": ["<rootDir>/__tests__/**/*.js"],
+	"testMatch": ["<rootDir>/__tests__/**/*.{js,ts}"],
 	"testEnvironment": "node",
 	"transform": {
-		"^.+\\.js$": "<rootDir>/node_modules/babel-jest"
+		"^.+\\.js$": "babel-jest",
+		"^.+\\.ts$": "ts-jest"
 	},
-	"transformIgnorePatterns": ["<rootDir>/node_modules/(?!@constantiner)/"]
+	"transformIgnorePatterns": ["<rootDir>/node_modules/(?!@constantiner)/"],
+	"preset": "ts-jest",
+	"moduleDirectories": ["node_modules", "<rootDir>/src"],
+	"moduleNameMapper": {
+		"@test/(.*)": "<rootDir>/__tests__/$1"
+	}
 }

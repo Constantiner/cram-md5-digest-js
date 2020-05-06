@@ -5,9 +5,9 @@ node_modules
 package-lock.json
 coverage
 .*
-gulpfile.js
 babel.config.js
 cram-md5-digest-*.tgz
 scripts
 jest.config.json
 rollup.config.js
+tsconfig.json
