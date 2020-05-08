@@ -1,16 +1,22 @@
 # Changelog
 
-## [v0.9.8](https://github.com/Constantiner/cram-md5-digest-js/tree/v0.9.8) (2020-04-30)
+## [v0.9.8](https://github.com/Constantiner/cram-md5-digest-js/tree/v0.9.8) (2020-05-08)
 
 [Full Changelog](https://github.com/Constantiner/cram-md5-digest-js/compare/0.9.7...v0.9.8)
 
+This release improves all the project infrastructure to meet all the best practices. Library's sources is in TypeScript now and build contains corresponding type definitions. We drop support for UMD build. Anyway, all the APIs haven't changed.
+
 **Implemented enhancements:**
 
+- Update documentation [\#28](https://github.com/Constantiner/cram-md5-digest-js/issues/28)
 - Add badges to README [\#24](https://github.com/Constantiner/cram-md5-digest-js/issues/24)
+- Add TypeScript support [\#15](https://github.com/Constantiner/cram-md5-digest-js/issues/15)
 - Include actual current year into license text [\#14](https://github.com/Constantiner/cram-md5-digest-js/issues/14)
 - Add CI support [\#13](https://github.com/Constantiner/cram-md5-digest-js/issues/13)
+- Add changelog generation [\#12](https://github.com/Constantiner/cram-md5-digest-js/issues/12)
 - Revise Husky and lint-staged configuration [\#11](https://github.com/Constantiner/cram-md5-digest-js/issues/11)
 - Extract Prettier configuration into separate files [\#10](https://github.com/Constantiner/cram-md5-digest-js/issues/10)
+- Add cool ESLint plugins to improve code quality [\#9](https://github.com/Constantiner/cram-md5-digest-js/issues/9)
 - Add watch mode support for tests [\#8](https://github.com/Constantiner/cram-md5-digest-js/issues/8)
 - Use Rollup for build [\#7](https://github.com/Constantiner/cram-md5-digest-js/issues/7)
 
@@ -20,6 +26,10 @@
 
 **Merged pull requests:**
 
+- Update documentation [\#30](https://github.com/Constantiner/cram-md5-digest-js/pull/30)
+- Add cool ESLint plugins to improve code quality [\#29](https://github.com/Constantiner/cram-md5-digest-js/pull/29)
+- Add TypeScript support [\#27](https://github.com/Constantiner/cram-md5-digest-js/pull/27)
+- Add changelog generation [\#26](https://github.com/Constantiner/cram-md5-digest-js/pull/26)
 - Add badges to README [\#25](https://github.com/Constantiner/cram-md5-digest-js/pull/25)
 - Add CI support [\#23](https://github.com/Constantiner/cram-md5-digest-js/pull/23)
 - Add watch mode support for tests [\#22](https://github.com/Constantiner/cram-md5-digest-js/pull/22)
