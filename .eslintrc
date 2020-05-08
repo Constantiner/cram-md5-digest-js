@@ -10,7 +10,10 @@
 		"jest": true
 	},
 	"rules": {
-		"semi": ["error", "always"]
+		"semi": ["error", "always"],
+		"unicorn/no-fn-reference-in-iterator": "off",
+		"unicorn/filename-case": ["error", { "case": "camelCase" }],
+		"unicorn/number-literal-case": "off"
 	},
-	"extends": ["eslint:recommended", "plugin:prettier/recommended"]
+	"extends": ["eslint:recommended", "plugin:prettier/recommended", "plugin:unicorn/recommended"]
 }

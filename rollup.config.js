@@ -5,17 +5,17 @@ import { sync as globby } from "globby";
 import prettier from "rollup-plugin-prettier";
 
 const getBuildDate = () => format(new Date(), "dd MMMM yyyy");
-const pkg = require("./package.json");
+const package_ = require("./package.json");
 
 const getActualBanner = () => {
 	const licenseText = readFileSync("./LICENSE", "utf-8");
 	const banner = `/**
- * ${pkg.name}
- * ${pkg.description}
+ * ${package_.name}
+ * ${package_.description}
  * 
- * @author ${pkg.author.name} <${pkg.author.email}>
- * @version v${pkg.version}
- * @link ${pkg.homepage}
+ * @author ${package_.author.name} <${package_.author.email}>
+ * @version v${package_.version}
+ * @link ${package_.homepage}
  * @date ${getBuildDate()}
  * 
 ${licenseText.replace(/^/gm, " * ")}

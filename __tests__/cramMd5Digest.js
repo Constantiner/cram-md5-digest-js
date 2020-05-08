@@ -1,4 +1,4 @@
-import { cramMd5DigestBase64, cramMd5Digest } from "../src/cram-md5-digest";
+import { cramMd5DigestBase64, cramMd5Digest } from "../src/cramMd5Digest";
 
 describe("cramMd5Digest", () => {
 	describe("cramMd5DigestBase64 without padding", () => {
