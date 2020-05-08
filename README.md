@@ -33,16 +33,6 @@ import { cramMd5DigestBase64 } from "@constantiner/cram-md5-digest";
 cramMd5DigestBase64("voxjx70j131lv9g645j6Znx8535l5Xb1nkl6CF0489lE2Gc^b*H&F5jn", "1$G15/iw");
 ```
 
-It also contains UMD supported JS file to use, for example, with CommonJS environment (or AMD):
-
-```javascript
-const { cramMd5DigestBase64 } = require("@constantiner/cram-md5-digest-umd");
-```
-
-**Note**. The UMD version of package is ES5 compatible but you may need to use [`@babel/polyfill`](https://babeljs.io/docs/en/babel-polyfill/) or even [`@babel/runtime`](https://babeljs.io/docs/en/babel-runtime) with it.
-
-**Note**. Build includes sourcemaps and minified versions of UMD files as well. You can find them in your `node_modules` folder.
-
 ## Documentation
 
 ### cramMd5Digest
