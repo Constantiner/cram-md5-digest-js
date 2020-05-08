@@ -27,10 +27,12 @@
 			}
 		]
 	},
+	"plugins": ["security"],
 	"extends": [
 		"eslint:recommended",
 		"plugin:prettier/recommended",
 		"plugin:unicorn/recommended",
-		"plugin:node/recommended"
+		"plugin:node/recommended",
+		"plugin:security/recommended"
 	]
 }
