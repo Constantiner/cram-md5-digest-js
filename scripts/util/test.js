@@ -10,7 +10,7 @@ function isInGitRepository(execSync) {
 	try {
 		execSync("git rev-parse --is-inside-work-tree", { stdio: "ignore" });
 		return true;
-	} catch (e) {
+	} catch (_) {
 		return false;
 	}
 }
@@ -19,7 +19,7 @@ function isInMercurialRepository(execSync) {
 	try {
 		execSync("hg --cwd . root", { stdio: "ignore" });
 		return true;
-	} catch (e) {
+	} catch (_) {
 		return false;
 	}
 }

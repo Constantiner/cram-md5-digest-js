@@ -10,7 +10,29 @@
 		"jest": true
 	},
 	"rules": {
-		"semi": ["error", "always"]
+		"semi": ["error", "always"],
+		"unicorn/no-fn-reference-in-iterator": "off",
+		"unicorn/filename-case": ["error", { "case": "camelCase" }],
+		"unicorn/number-literal-case": "off",
+		"node/no-unsupported-features/es-syntax": [
+			"error",
+			{
+				"ignores": ["modules"]
+			}
+		],
+		"node/no-missing-import": [
+			"error",
+			{
+				"tryExtensions": [".js", ".ts"]
+			}
+		]
 	},
-	"extends": ["eslint:recommended", "plugin:prettier/recommended"]
+	"plugins": ["security"],
+	"extends": [
+		"eslint:recommended",
+		"plugin:prettier/recommended",
+		"plugin:unicorn/recommended",
+		"plugin:node/recommended",
+		"plugin:security/recommended"
+	]
 }

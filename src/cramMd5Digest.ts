@@ -42,7 +42,7 @@ const range = (from: number, to: number): number[] =>
 		Array.from({
 			length
 		}),
-	copyState = (source: State, overridesObj: Partial<State> = {}): State =>
+	copyState = (source: State, overridesObject: Partial<State> = {}): State =>
 		Object.assign(
 			{},
 			source,
@@ -50,10 +50,10 @@ const range = (from: number, to: number): number[] =>
 				block: [...source.block],
 				padding: [...source.padding]
 			},
-			overridesObj
+			overridesObject
 		),
-	init = (initObj: State): State =>
-		copyState(initObj, {
+	init = (initObject: State): State =>
+		copyState(initObject, {
 			byteCount: 0,
 			state0: 0x67452301,
 			state1: 0xefcdab89,
@@ -89,7 +89,7 @@ const range = (from: number, to: number): number[] =>
 			...[...nBitsGenerator(nBits)].map(utfTextValue(code))
 		])(initialNBits(code)),
 	toUTFArray = (stringToEncode: string): number[] =>
-		Array.from(stringToEncode)
+		[...stringToEncode]
 			.map(x => x.charCodeAt(0))
 			.reduce((utfText, code) => [...utfText, ...(code < 0x80 ? [code] : utfTextForCodeMoreThan0x80(code))], []),
 	toUnsigned = (x: number): number => (x + 0x100000000) % 0x100000000,
@@ -112,24 +112,25 @@ const range = (from: number, to: number): number[] =>
 	GG = XX(G),
 	HH = XX(H),
 	II = XX(I),
-	modifyStates = stateObj => ([a, b, c, d]: Block): State =>
-		copyState(stateObj, {
-			state0: toUnsigned(stateObj.state0 + a),
-			state1: toUnsigned(stateObj.state1 + b),
-			state2: toUnsigned(stateObj.state2 + c),
-			state3: toUnsigned(stateObj.state3 + d)
+	modifyStates = stateObject => ([a, b, c, d]: Block): State =>
+		copyState(stateObject, {
+			state0: toUnsigned(stateObject.state0 + a),
+			state1: toUnsigned(stateObject.state1 + b),
+			state2: toUnsigned(stateObject.state2 + c),
+			state3: toUnsigned(stateObject.state3 + d)
 		}),
-	x = (stateObj: State): number[] =>
+	x = (stateObject: State): number[] =>
 		getEmptyArray(16).map(
 			(_, j) =>
-				((stateObj.block[j * 4 + 3] * 256 + stateObj.block[j * 4 + 2]) * 256 + stateObj.block[j * 4 + 1]) *
+				((stateObject.block[j * 4 + 3] * 256 + stateObject.block[j * 4 + 2]) * 256 +
+					stateObject.block[j * 4 + 1]) *
 					256 +
-				stateObj.block[j * 4]
+				stateObject.block[j * 4]
 		),
 	//
 	// MD5 basic transformation. Transforms state based on block.
 	//
-	transformBlock = (stateObj: State): State =>
+	transformBlock = (stateObject: State): State =>
 		pipe(
 			FF(0, 7),
 			FF(1, 12),
@@ -195,56 +196,57 @@ const range = (from: number, to: number): number[] =>
 			II(11, 10),
 			II(2, 15),
 			II(9, 21),
-			modifyStates(stateObj)
-		)([stateObj.state0, stateObj.state1, stateObj.state2, stateObj.state3, 0, x(stateObj)] as Block),
-	update = (inputArray: number[], inputLength: number = inputArray.length) => (stateObj: State): State =>
-		inputArray.slice(0, inputLength).reduce((stateObj, item) => {
-			stateObj.block[stateObj.byteCount % 64] = item;
-			if (++stateObj.byteCount % 64 === 0) {
-				stateObj = transformBlock(stateObj);
+			modifyStates(stateObject)
+		)([stateObject.state0, stateObject.state1, stateObject.state2, stateObject.state3, 0, x(stateObject)] as Block),
+	update = (inputArray: number[], inputLength: number = inputArray.length) => (stateObject: State): State =>
+		inputArray.slice(0, inputLength).reduce((stateObject_, item) => {
+			stateObject_.block[stateObject_.byteCount % 64] = item;
+			if (++stateObject_.byteCount % 64 === 0) {
+				stateObject_ = transformBlock(stateObject_);
 			}
-			return stateObj;
-		}, copyState(stateObj)),
+			return stateObject_;
+		}, copyState(stateObject)),
 	set32Little = (value: number, index: number) => (array: number[]): number[] =>
-		range(0, 3).reduce((arr, i) => ((arr[index + i] = (value >>> (i * 8)) & 0xff), arr), [...array]),
-	getBits = (stateObj: State): number[] =>
+		range(0, 3).reduce((array_, i) => ((array_[index + i] = (value >>> (i * 8)) & 0xff), array_), [...array]),
+	getBits = (stateObject: State): number[] =>
 		pipe(
-			set32Little(stateObj.byteCount * 8, 0),
-			set32Little(Math.floor((stateObj.byteCount * 8) / 0x100000000), 4)
+			set32Little(stateObject.byteCount * 8, 0),
+			set32Little(Math.floor((stateObject.byteCount * 8) / 0x100000000), 4)
 		)(getEmptyArray(8)),
 	alignIndex = (index: number): number =>
 		([
 			[56, (ind: number): number => 120 - ind],
 			[-Infinity, (ind: number): number => 56 - ind]
 		].find((range: [number, (ind: number) => number]) => index >= range[0])[1] as (ind: number) => number)(index),
-	getIndex = (stateObj: State): number => alignIndex(stateObj.byteCount % 64),
-	updateWithIndex = (stateObj: State): State => update(stateObj.padding, getIndex(stateObj))(stateObj),
-	getFinalDigestObj = (stateObj: State): State => ({
+	getIndex = (stateObject: State): number => alignIndex(stateObject.byteCount % 64),
+	updateWithIndex = (stateObject: State): State => update(stateObject.padding, getIndex(stateObject))(stateObject),
+	getFinalDigestObject = (stateObject: State): State => ({
 		digest: pipe(
-			set32Little(stateObj.state0, 0),
-			set32Little(stateObj.state1, 4),
-			set32Little(stateObj.state2, 8),
-			set32Little(stateObj.state3, 12)
+			set32Little(stateObject.state0, 0),
+			set32Little(stateObject.state1, 4),
+			set32Little(stateObject.state2, 8),
+			set32Little(stateObject.state3, 12)
 		)(getEmptyArray(16)),
-		padding: [...stateObj.padding],
-		block: [...stateObj.block]
+		padding: [...stateObject.padding],
+		block: [...stateObject.block]
 	}),
-	finalDigest = (stateObj: State): State =>
-		pipe(updateWithIndex, update(getBits(stateObj)), getFinalDigestObj)(stateObj),
+	finalDigest = (stateObject: State): State =>
+		pipe(updateWithIndex, update(getBits(stateObject)), getFinalDigestObject)(stateObject),
 	hexByte = (x: number): string => (x < 16 ? "0" : "") + x.toString(16),
-	toHexString = (byteArray: number[]): string => byteArray.reduce((acc, x) => acc + hexByte(x), "").toLowerCase(),
-	finalHexDigest = (stateObj: State): string => toHexString(finalDigest(stateObj).digest),
+	toHexString = (byteArray: number[]): string =>
+		byteArray.reduce((accumulator, x) => accumulator + hexByte(x), "").toLowerCase(),
+	finalHexDigest = (stateObject: State): string => toHexString(finalDigest(stateObject).digest),
 	expandArrayTo64Length = (original: number[]): number[] => [
 		...original,
 		...(Array.from({
 			length: 64 - original.length
 		}).fill(0) as number[])
 	],
-	updateWithDigest = (stateObj: State): State => update(stateObj.digest)(stateObj),
-	performCram = (passwordAsUTFArray: number[], cramKey: string, stateObj: State): string => {
+	updateWithDigest = (stateObject: State): State => update(stateObject.digest)(stateObject),
+	performCram = (passwordAsUTFArray: number[], cramKey: string, stateObject: State): string => {
 		const paddedKey: number[] = expandArrayTo64Length(
 			passwordAsUTFArray.length > 64
-				? ((stateObj = pipe(update(passwordAsUTFArray), finalDigest, init)(stateObj)), stateObj.digest)
+				? ((stateObject = pipe(update(passwordAsUTFArray), finalDigest, init)(stateObject)), stateObject.digest)
 				: passwordAsUTFArray
 		).map(sym => sym ^ 0x36);
 
@@ -257,7 +259,7 @@ const range = (from: number, to: number): number[] =>
 			update(paddedKey.map(sym => sym ^ 0x36 ^ 0x5c)),
 			updateWithDigest,
 			finalHexDigest
-		)(stateObj);
+		)(stateObject);
 	},
 	/**
 	 * Generates MD5 hash from passwordString and cramKey
@@ -305,7 +307,7 @@ const range = (from: number, to: number): number[] =>
 	 */
 	cramMd5DigestBase64 = (passwordString: string, cramKey: string, padding = false): string =>
 		base64Encode(
-			Array.from(cramMd5Digest(passwordString, cramKey)).map(char => char.charCodeAt(0)),
+			[...cramMd5Digest(passwordString, cramKey)].map(char => char.charCodeAt(0)),
 			padding
 		);
 
