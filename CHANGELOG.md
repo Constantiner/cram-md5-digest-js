@@ -4,7 +4,7 @@
 
 [Full Changelog](https://github.com/Constantiner/cram-md5-digest-js/compare/0.9.7...v0.9.8)
 
-This release improves all the project infrastructure to meet all the best practices. Library's sources is in TypeScript now and build contains corresponding type definitions. We drop support for UMD build. Anyway, all the APIs haven't changed.
+This release improves all the project infrastructure to meet all the best practices. Library's sources are written in TypeScript now and build contains corresponding type definitions. We drop support for UMD build. Anyway, all the APIs haven't changed.
 
 **Implemented enhancements:**
 
@@ -42,10 +42,6 @@ This release improves all the project infrastructure to meet all the best practi
 
 [Full Changelog](https://github.com/Constantiner/cram-md5-digest-js/compare/0.9.6...0.9.7)
 
-**Merged pull requests:**
-
-- Create changelog file [\#6](https://github.com/Constantiner/cram-md5-digest-js/pull/6)
-
 ## [0.9.6](https://github.com/Constantiner/cram-md5-digest-js/tree/0.9.6) (2019-02-08)
 
 [Full Changelog](https://github.com/Constantiner/cram-md5-digest-js/compare/0.9.5...0.9.6)
@@ -58,6 +54,7 @@ This release improves all the project infrastructure to meet all the best practi
 
 **Merged pull requests:**
 
+- Create changelog file [\#6](https://github.com/Constantiner/cram-md5-digest-js/pull/6)
 - Format non minified distribution files with Prettier [\#5](https://github.com/Constantiner/cram-md5-digest-js/pull/5)
 - Include license text in distribution files header [\#4](https://github.com/Constantiner/cram-md5-digest-js/pull/4)
 
